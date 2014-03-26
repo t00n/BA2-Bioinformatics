@@ -24,7 +24,17 @@ class Sequence:
 	
 	def align(self, other, score, penalty):
 		matrix = [x[:] for x in [[0]*len(self.seq)]*len(other.seq)]
-	
+		for i in range(0, len(self.seq)):
+			matrix[0][i] = penalty*i
+		for i in range(0, len(other.seq)):
+			matrix[i][0] = penalty*i
+		for i in range(1, len(other.seq)):
+			for j in range(1, len(self.seq)):
+				match = matrix[i-1][j-1] # add score
+				delete = matrix[i-1][j] + penalty
+				insert = matrix[i][j-1] + penalty
+				matrix[i][j] = max(match, delete, insert)
+
 class Score:
 	def __init__(self, matrice, acides):
 		self.matrice = matrice
@@ -70,4 +80,4 @@ for seq in maguk:
 score = Score.load("blosum80.txt")
 print(score)
 
-sequences[0].align(sequences[1], score, 4)
+sequences[0].align(sequences[1], score, -4)
