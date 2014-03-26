@@ -21,8 +21,8 @@ class Sequence:
 	def __repr__(self):
 		return self.seq
 	
-	def align(other, score):
-		pass
+	def align(self, other, score, penalty):
+		matrix = [x[:] for x in [[0]*len(self.seq)]*len(other.seq)]
 	
 class Score:
 	def __init__(self, matrice, acides):
@@ -60,7 +60,14 @@ class Score:
 
 sequences = Sequence.load("PDZ-sequences.fasta")
 for seq in sequences:
+	print(len(seq.seq))
+	print(seq)
+
+maguk = Sequence.load("maguk-sequences.fasta")
+for seq in maguk:
 	print(seq)
 
 score = Score.load("blosum80.txt")
 print(score)
+
+sequences[1].align(sequences[2], score, 4)
