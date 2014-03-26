@@ -19,6 +19,9 @@ class Sequence:
 		f.close()
 		return sequences
 	
+	def __getitem__(self, index):
+		return self.seq[index]
+
 	def __repr__(self):
 		return self.seq
 	
@@ -30,7 +33,8 @@ class Sequence:
 			matrix[i][0] = penalty*i
 		for i in range(1, len(other.seq)):
 			for j in range(1, len(self.seq)):
-				match = matrix[i-1][j-1] # add score
+				#print(str(i)+":"+str(j)+":"+str(matrix[i][j])+":"+str(self[j])+":"+str(other[i])+":"+str(score[self[j], other[i]]))
+				match = matrix[i-1][j-1] + score[self[j], other[i]]
 				delete = matrix[i-1][j] + penalty
 				insert = matrix[i][j-1] + penalty
 				matrix[i][j] = max(match, delete, insert)
@@ -51,10 +55,15 @@ class Score:
 				acides = line.split()
 			else:
 				l = line[1:]
-				matrice.append(map(int, l.split()))
+				matrice.append(list(map(int, l.split())))
 		f.close()
 		return Score(matrice, acides)
 		
+	def __getitem__(self, index):
+		i = self.acides.index(index[0])
+		j = self.acides.index(index[1])
+		return self.matrice[i][j]
+
 	def __repr__(self):
 		ret = ""
 		for char in self.acides:
@@ -70,14 +79,15 @@ class Score:
 
 
 sequences = Sequence.load("PDZ-sequences.fasta")
-for seq in sequences:
-	print(seq)
-
 maguk = Sequence.load("maguk-sequences.fasta")
-for seq in maguk:
-	print(seq)
-
 score = Score.load("blosum80.txt")
-print(score)
+
+# for seq in sequences:
+# 	print(seq)
+
+# for seq in maguk:
+# 	print(seq)
+
+# print(score)
 
 sequences[0].align(sequences[1], score, -4)
