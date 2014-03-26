@@ -28,22 +28,16 @@ class Sequence:
 		return len(self.seq)
 
 	def alignEnd(self, other, score, penalty, matrix, i, j, alignmentA, alignmentB):
-		while (i > 0 or j > 0):
+		if (i > 0 or j > 0):
 			if (i > 0 and j > 0 and matrix[i][j] == matrix[i-1][j-1] + score[self[j], other[i]]):
-				alignmentA = self[j] + alignmentA
-				alignmentB = other[i] + alignmentB
-				i -= 1
-				j -= 1
-			elif (j > 0 and matrix[i][j] == matrix[i][j-1] + penalty):
-				alignmentA = self[j] + alignmentA
-				alignmentB = "-" + alignmentB
-				j -= 1
-			elif (i > 0 and matrix[i][j] == matrix[i-1][j] + penalty):
-				alignmentA = "-" + alignmentA
-				alignmentB = other[i] + alignmentB
-				i -= 1
-		print(self[0] + alignmentA)
-		print(other[0] + alignmentB)
+				self.alignEnd(other, score, penalty, matrix, i-1, j-1, self[j] + alignmentA, other[i] + alignmentB)
+			if (j > 0 and matrix[i][j] == matrix[i][j-1] + penalty):
+				self.alignEnd(other, score, penalty, matrix, i, j-1, self[j] + alignmentA, "-" + alignmentB)
+			if (i > 0 and matrix[i][j] == matrix[i-1][j] + penalty):
+				self.alignEnd(other, score, penalty, matrix, i-1, j, "-" + alignmentA, other[i] + alignmentB)
+		else:
+			print(self[0] + alignmentA)
+			print(other[0] + alignmentB)
 
 	def align(self, other, score, penalty):
 		matrix = [x[:] for x in [[0]*len(self)]*len(other)]
