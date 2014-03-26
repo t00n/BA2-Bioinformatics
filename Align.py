@@ -11,7 +11,8 @@ class Sequence:
 			if line[0].isalpha():
 				seq += line[:-1]
 			else:
-				sequences.append(Sequence(seq))
+				if (seq != ""):
+					sequences.append(Sequence(seq))
 				seq = ""
 		if (seq != ""):
 			sequences.append(Sequence(seq))
@@ -60,7 +61,6 @@ class Score:
 
 sequences = Sequence.load("PDZ-sequences.fasta")
 for seq in sequences:
-	print(len(seq.seq))
 	print(seq)
 
 maguk = Sequence.load("maguk-sequences.fasta")
@@ -70,4 +70,4 @@ for seq in maguk:
 score = Score.load("blosum80.txt")
 print(score)
 
-sequences[1].align(sequences[2], score, 4)
+sequences[0].align(sequences[1], score, 4)
