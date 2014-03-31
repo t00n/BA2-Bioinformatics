@@ -16,24 +16,22 @@ class NeedlemanWunsch:
 
 	def computeScores(self):
 		self.matrix = [x[:] for x in [[0]*len(self.seqB)]*len(self.seqA)]
-		self.GapA = [x[:] for x in [[-float("inf")]*len(self.seqB)]*len(self.seqA)]
-		self.GapB = [x[:] for x in [[-float("inf")]*len(self.seqB)]*len(self.seqA)]
-		self.result = [x[:] for x in [[0]*len(self.seqB)]*len(self.seqA)]
+		self.GapA = [x[:] for x in [[float("-inf")]*len(self.seqB)]*len(self.seqA)]
+		self.GapB = [x[:] for x in [[float("-inf")]*len(self.seqB)]*len(self.seqA)]
+		self.result = [x[:] for x in [[int]*len(self.seqB)]*len(self.seqA)]
 
 		for i in range(1, len(self.seqA)):
-			self.matrix[i][0] = -float("inf")
-			self.result[i][0] = -float("inf")
+			self.matrix[i][0] = float("-inf")
 			self.GapA[i][0] = self.gap_start + (i-1) * self.gap_extend
 			self.GapB[i][1] = self.gap_start
 
 		for j in range(1, len(self.seqB)):
-			self.matrix[0][j] = -float("inf")
-			self.result[0][j] = -float("inf")
+			self.matrix[0][j] = float("-inf")
 			self.GapA[1][j] = self.gap_start
 			self.GapB[0][j] = self.gap_start + (j-1) * self.gap_extend
 
-		for i in range(1, len(self.seqA)):
-			for j in range(1, len(self.seqB)):
+		for i in range(0, len(self.seqA)):
+			for j in range(0, len(self.seqB)):
 				self.matrix[i][j] = max(self.matrix[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]],
 					self.GapA[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]],
 					self.GapB[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]])
