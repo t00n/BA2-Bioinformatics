@@ -30,8 +30,20 @@ class NeedlemanWunsch:
 			self.GapA[1][j] = self.gap_start
 			self.GapB[0][j] = self.gap_start + (j-1) * self.gap_extend
 
-		for i in range(0, len(self.seqA)):
-			for j in range(0, len(self.seqB)):
+		print ("M")
+		for line in self.matrix:
+			print(line)
+
+		print("I")
+		for line in self.GapA:
+			print(line)
+
+		print("J")
+		for line in self.GapB:
+			print(line)
+
+		for i in range(1, len(self.seqA)):
+			for j in range(1, len(self.seqB)):
 				self.matrix[i][j] = max(self.matrix[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]],
 					self.GapA[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]],
 					self.GapB[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]])
