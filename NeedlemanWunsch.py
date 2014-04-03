@@ -9,76 +9,71 @@ class NeedlemanWunsch:
 		self.alignmentB = []
 
 	def __repr__(self):
-		str = ""
+		ret = ""
 		for i in range(0, len(self.alignmentA)):
-			str += self.alignmentA[i] + '\n' + self.alignmentB[i] + '\n' + '\n'
-		return str
+			ret += self.alignmentA[i] + '\n' + self.alignmentB[i] + '\n' + '\n'
+		ret += "Global score : " + str(self.S[len(self.seqA)][len(self.seqB)])
+		return ret
 
 	def computeScores(self):
-		self.matrix = [x[:] for x in [[0]*len(self.seqB)]*len(self.seqA)]
-		self.GapA = [x[:] for x in [[float("-inf")]*len(self.seqB)]*len(self.seqA)]
-		self.GapB = [x[:] for x in [[float("-inf")]*len(self.seqB)]*len(self.seqA)]
-		self.result = [x[:] for x in [[int]*len(self.seqB)]*len(self.seqA)]
+		self.S = [x[:] for x in [[float("-inf")]*(len(self.seqB)+1)]*(len(self.seqA)+1)]
+		self.V = [x[:] for x in [[float("-inf")]*(len(self.seqB)+1)]*(len(self.seqA)+1)]
+		self.W = [x[:] for x in [[float("-inf")]*(len(self.seqB)+1)]*(len(self.seqA)+1)]
+		self.S[0][0] = 0
+		self.V[0][0] = 0
+		self.W[0][0] = 0
 
-		for i in range(1, len(self.seqA)):
-			self.matrix[i][0] = float("-inf")
-			self.GapA[i][0] = self.gap_start + (i-1) * self.gap_extend
-			self.GapB[i][1] = self.gap_start
+		for i in range(1, len(self.seqA)+1):
+			self.S[i][0] = - self.gap_start - (i-1) * self.gap_extend
+			self.W[i][0] = self.S[i][0]
 
-		for j in range(1, len(self.seqB)):
-			self.matrix[0][j] = float("-inf")
-			self.GapA[1][j] = self.gap_start
-			self.GapB[0][j] = self.gap_start + (j-1) * self.gap_extend
+		for j in range(1, len(self.seqB)+1):
+			self.S[0][j] = - self.gap_start - (j-1) * self.gap_extend
+			self.V[0][j] = self.S[0][j]
 
-		print ("M")
-		for line in self.matrix:
-			print(line)
+		# for line in self.S:
+		# 	print(line)
+		# for line in self.V:
+		# 	print(line)
+		# for line in self.W:
+		# 	print(line)
 
-		print("I")
-		for line in self.GapA:
-			print(line)
+		for i in range(1, len(self.seqA)+1):
+			for j in range(1, len(self.seqB)+1):
+				self.V[i][j] = max(
+					self.S[i-1][j] - self.gap_start - self.gap_extend, 	# before = alignment and now = gap
+					self.V[i-1][j] - self.gap_extend)	# before = gap and now = gap
 
-		print("J")
-		for line in self.GapB:
-			print(line)
+				self.W[i][j] = max(
+					self.S[i][j-1] - self.gap_start - self.gap_extend, 	# before = alignment and now = gap
+					self.W[i][j-1] - self.gap_extend)	# before = gap and now = gap
 
-		for i in range(1, len(self.seqA)):
-			for j in range(1, len(self.seqB)):
-				self.matrix[i][j] = max(self.matrix[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]],
-					self.GapA[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]],
-					self.GapB[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]])
-				self.GapA[i][j] = max(self.matrix[i-1][j] + self.gap_start, self.GapA[i-1][j] + self.gap_extend)
-				self.GapB[i][j] = max(self.matrix[i][j-1] + self.gap_start, self.GapB[i][j-1] + self.gap_extend)
-				self.result[i][j] = max(self.matrix[i][j], self.GapA[i][j], self.GapB[i][j])
+				self.S[i][j] = max(
+					self.S[i-1][j-1] + self.score[self.seqA[i-1], self.seqB[j-1]],	# alignment = diagonal
+					self.V[i][j],	# gap in Sequence A = top
+					self.W[i][j])	# gap in Sequence B = left
+
+		# for line in self.S:
+		# 	print(line)
+		# for line in self.V:
+		# 	print(line)
+		# for line in self.W:
+		# 	print(line)
+			
 
 	def findAlignments(self, i, j, alignmentA, alignmentB):
 		# print(str(i) + ":" + str(j) + ":" + alignmentA + ":" + alignmentB)
 		if (i > 0 or j > 0):
-			# diagonal : same score
-			if (i > 0 and j > 0 and self.result[i][j] == self.matrix[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]]):
-				self.findAlignments(i-1, j-1, self.seqA[i] + alignmentA, self.seqB[j] + alignmentB)
-			# diagonal : gap A
-			if (i > 0 and j > 0 and self.result[i][j] == self.GapA[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]]):
-				self.findAlignments(i-1, j-1, self.seqA[i] + alignmentA, self.seqB[j] + alignmentB)
-			# diagonal : gap B
-			if (i > 0 and j > 0 and self.result[i][j] == self.GapB[i-1][j-1] + self.score[self.seqA[i], self.seqB[j]]):
-				self.findAlignments(i-1, j-1, self.seqA[i] + alignmentA, self.seqB[j] + alignmentB)
-			# left : gap start
-			if (i > 0 and self.result[i][j] == self.matrix[i-1][j] + self.gap_start):
-				self.findAlignments(i-1, j, self.seqA[i] + alignmentA, "-" + alignmentB)
-			# left : gap extend
-			if (i > 0 and self.result[i][j] == self.GapA[i-1][j] + self.gap_extend):
-				self.findAlignments(i-1, j, self.seqA[i] + alignmentA, "-" + alignmentB)
-			# right : gap start
-			if (j > 0 and self.result[i][j] == self.matrix[i][j-1] + self.gap_start):
-				self.findAlignments(i, j-1, "-" + alignmentA, self.seqB[j] + alignmentB)
-			# right : gap extend
-			if (j > 0 and self.result[i][j] == self.GapB[i][j-1] + self.gap_extend):
-				self.findAlignments(i, j-1, "-" + alignmentA, self.seqB[j] + alignmentB)
+			if (i > 0 and j > 0 and self.S[i][j] == self.S[i-1][j-1] + self.score[self.seqA[i-1], self.seqB[j-1]]):
+				self.findAlignments(i-1, j-1, self.seqA[i-1] + alignmentA, self.seqB[j-1] + alignmentB)
+			if (i > 0 and self.S[i][j] == self.V[i][j]):
+				self.findAlignments(i-1, j, self.seqA[i-1] + alignmentA, "-" + alignmentB)
+			if (j > 0 and self.S[i][j] == self.W[i][j]):
+				self.findAlignments(i, j-1, "-" + alignmentA, self.seqB[j-1] + alignmentB)
 		else:
-			self.alignmentA.append(self.seqA[0] + alignmentA)
-			self.alignmentB.append(self.seqB[0] + alignmentB)
+			print(alignmentA)
+			print(alignmentB)
 
 	def align(self):
 		self.computeScores()
-		self.findAlignments(len(self.seqA) - 1, len(self.seqB) - 1, "", "")
+		self.findAlignments(len(self.seqA), len(self.seqB), "", "")
