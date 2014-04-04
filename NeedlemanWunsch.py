@@ -10,19 +10,25 @@ class NeedlemanWunsch:
 	def __repr__(self):
 		ret = ""
 		for i in range(0, len(self.result)):
+			ret += "Result #" + str(i) + "\n"
 			ret += self.result[i][0] + '\n'
-			for j in range(0, len(self.result[i][0])):
+			cpt = 0
+			# lalign style notation ":" for identity, "." for similarity, " " for a gap
+			for j in range(0, len(self.result[i][0])): 
 				if (self.result[i][0][j] == self.result[i][1][j]):
 					ret += ':'
+					cpt += 1
 				elif (self.result[i][0][j] == '-' or self.result[i][1][j] == '-'):
 					ret += ' '
 				else:
 					ret += '.'
 			ret += '\n' + self.result[i][1] + '\n'
-		ret += "Global score : " + str(self.S[len(self.seqA)][len(self.seqB)])
+			ret += str(round(100*cpt/len(self.result[i][0]), 1)) + "% identity\n" # % identity
+		ret += "Global score : " + str(self.S[len(self.seqA)][len(self.seqB)]) # global score
 		return ret
 
 	def computeScores(self):
+		# S is the "result" matrix, V holds the gap score for sequence A, W holds the gap score for sequence B
 		self.S = [x[:] for x in [[float("-inf")]*(len(self.seqB)+1)]*(len(self.seqA)+1)]
 		self.V = [x[:] for x in [[float("-inf")]*(len(self.seqB)+1)]*(len(self.seqA)+1)]
 		self.W = [x[:] for x in [[float("-inf")]*(len(self.seqB)+1)]*(len(self.seqA)+1)]
@@ -40,13 +46,7 @@ class NeedlemanWunsch:
 			self.V[0][j] = self.S[0][j]
 			self.W[0][j] = self.S[0][j]
 
-		# for line in self.S:
-		# 	print(line)
-		# for line in self.V:
-		# 	print(line)
-		# for line in self.W:
-		# 	print(line)
-
+		# compute scores : gap score for sequence A then gap score for sequence B then max score (gaps or alignement)
 		for i in range(1, len(self.seqA)+1):
 			for j in range(1, len(self.seqB)+1):
 				self.V[i][j] = max(
@@ -61,15 +61,8 @@ class NeedlemanWunsch:
 					self.S[i-1][j-1] + self.scoreMatrix[self.seqA[i-1], self.seqB[j-1]],	# alignment = diagonal
 					self.V[i][j],	# gap in Sequence A = top
 					self.W[i][j])	# gap in Sequence B = left
-
-		# for line in self.S:
-		# 	print(line)
-		# for line in self.V:
-		# 	print(line)
-		# for line in self.W:
-		# 	print(line)
 			
-
+	# traceback the path we ran through
 	def findAlignments(self, i, j, alignmentA, alignmentB):
 		if (i > 0 or j > 0):
 			if (i > 0 and j > 0 and self.S[i][j] == self.S[i-1][j-1] + self.scoreMatrix[self.seqA[i-1], self.seqB[j-1]]):
