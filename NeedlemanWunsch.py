@@ -26,10 +26,12 @@ class NeedlemanWunsch:
 		for i in range(1, len(self.seqA)+1):
 			self.S[i][0] = - self.gap_start - (i-1) * self.gap_extend
 			self.W[i][0] = self.S[i][0]
+			self.V[i][0] = self.S[i][0]
 
 		for j in range(1, len(self.seqB)+1):
 			self.S[0][j] = - self.gap_start - (j-1) * self.gap_extend
 			self.V[0][j] = self.S[0][j]
+			self.W[0][j] = self.S[0][j]
 
 		# for line in self.S:
 		# 	print(line)
@@ -53,23 +55,27 @@ class NeedlemanWunsch:
 					self.V[i][j],	# gap in Sequence A = top
 					self.W[i][j])	# gap in Sequence B = left
 
-		# for line in self.S:
-		# 	print(line)
-		# for line in self.V:
-		# 	print(line)
-		# for line in self.W:
-		# 	print(line)
+		for line in self.S:
+			print(line)
+		for line in self.V:
+			print(line)
+		for line in self.W:
+			print(line)
 			
 
 	def findAlignments(self, i, j, alignmentA, alignmentB):
-		# print(str(i) + ":" + str(j) + ":" + alignmentA + ":" + alignmentB)
+		print(str(i) + ":" + str(j) + ":" + alignmentA + ":" + alignmentB)
+		print(str(self.S[i][j])+":"+str(self.W[i][j-1] - self.gap_extend)+":"+str(self.S[i][j-1] - self.gap_start - self.gap_extend))
 		if (i > 0 or j > 0):
 			if (i > 0 and j > 0 and self.S[i][j] == self.S[i-1][j-1] + self.score[self.seqA[i-1], self.seqB[j-1]]):
 				self.findAlignments(i-1, j-1, self.seqA[i-1] + alignmentA, self.seqB[j-1] + alignmentB)
+			
 			if (i > 0 and self.S[i][j] == self.V[i][j]):
 				self.findAlignments(i-1, j, self.seqA[i-1] + alignmentA, "-" + alignmentB)
+			
 			if (j > 0 and self.S[i][j] == self.W[i][j]):
 				self.findAlignments(i, j-1, "-" + alignmentA, self.seqB[j-1] + alignmentB)
+
 		else:
 			print(alignmentA)
 			print(alignmentB)

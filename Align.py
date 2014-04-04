@@ -22,7 +22,9 @@ needlemanwunsch = NeedlemanWunsch(
 	# pdz[1],
 	"THISLINE",	
 	"ISALIGNED",
-	score, 4, 1)
+	# "CARS",
+	# "CATS",
+	score, 4, 2)
 
 needlemanwunsch.align()
 	
