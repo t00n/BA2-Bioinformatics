@@ -3,7 +3,7 @@ from Sequence import *
 from NeedlemanWunsch import *
 
 pdz = Sequence.load("PDZ-sequences.fasta")
-score = Score.load("pam120.txt")
+score = Score.load("blosum62.txt")
 # maguk = Sequence.load("maguk-sequences.fasta")
 
 # for seq in sequences:
@@ -14,15 +14,15 @@ score = Score.load("pam120.txt")
 
 # print(score)
 needlemanwunsch = NeedlemanWunsch(
-	"EIKLIKGPKGLGFSIAGGVGNQHIPGDNSIYVTKIIEGGAAHKDGRLQIGDKILAVNSVGLEDVMHEDAVAALKNTYDVVYLKVAKP", 
-	"RIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYK", 
+	# "EIKLIKGPKGLGFSIAGGVGNQHIPGDNSIYVTKIIEGGAAHKDGRLQIGDKILAVNSVGLEDVMHEDAVAALKNTYDVVYLKVAKP", 
+	# "RIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYK", 
 	# "ABCDEF",
 	# "ABABABA",
 	# pdz[0],
 	# pdz[1],
-	# "CATS",	
-	# "CARS",
-	score, 14, 4)
+	"THISLINE",	
+	"ISALIGNED",
+	score, 4, 1)
 
 needlemanwunsch.align()
 	

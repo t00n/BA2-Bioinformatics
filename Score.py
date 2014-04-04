@@ -40,3 +40,4 @@ if __name__ == '__main__':
 	assert(test["A","A"] == 4)
 	assert(test["Q","H"] == 0)
 	assert(test["X","X"] == -1)
+	assert(test["X","P"] == -2)
