@@ -4,7 +4,7 @@ from Alignment import *
 
 pdz = Sequence.load("PDZ-sequences.fasta")
 blosum62 = Score.load("blosum62.txt")
-# maguk = Sequence.load("maguk-sequences.fasta")
+maguk = Sequence.load("maguk-sequences.fasta")
 
 # for seq in sequences:
 # 	print(seq)
@@ -14,17 +14,17 @@ blosum62 = Score.load("blosum62.txt")
 
 # print(score)
 needlemanwunsch = Alignment(
-	# "EIKLIKGPKGLGFSIAGGVGNQHIPGDNSIYVTKIIEGGAAHKDGRLQIGDKILAVNSVGLEDVMHEDAVAALKNTYDVVYLKVAKP", 
-	# "RIVIHRGSTGLGFNIVGGEDGEGIFISFILAGGPADLSGELRKGDQILSVNGVDLRNASHEQAAIALKNAGQTVTIIAQYK", 
 	# "ABCDEF",
 	# "ABABABA",
-	pdz[0],
-	pdz[1],
+	# pdz[0],
+	# pdz[1],
 	# "ISALIGNED",	
 	# "THISLINE",
 	# "CARS",
 	# "CATS",
-	blosum62, 4, 4)
+	maguk[0],
+	maguk[1],
+	blosum62, 4, 2, Alignment.LOCAL)
 
 needlemanwunsch.align()
 	
