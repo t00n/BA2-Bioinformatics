@@ -1,6 +1,6 @@
 class Alignment:
-	LOCAL = 0
-	GLOBAL = 1
+	LOCAL = "local"
+	GLOBAL = "global"
 	def __init__(self, seqA, seqB, scoreMatrix, gap_start, gap_extend, type = GLOBAL):
 		self.seqA = seqA
 		self.seqB = seqB
@@ -56,7 +56,7 @@ class Alignment:
 			ret += str(round(100*similarity/len(self.result[i][0]), 1)) + "% similarity\n" 	# % similarity
 			ret += str(round(100*gap/len(self.result[i][0]), 1)) + "% gap\n"				# % gap
 			ret += "Length : " + str(len(self.result[i][0])) + "\n"
-			ret += "Local score : " + str(self.result[i][2]) + "\n"
+			#ret += "Local score : " + str(self.result[i][2]) + "\n"
 		ret += "Global score : " + str(self.S[self.max[0]][self.max[1]]) 					# global score
 		return ret
 
@@ -106,7 +106,7 @@ class Alignment:
 				self.maxScore = score
 				self.result.clear()
 			if (score == self.maxScore):
-				self.result.append((alignmentA, alignmentB, score))
+				self.result.append((alignmentA, alignmentB))
 
 	def align(self):
 		self.max = [0, 0]
