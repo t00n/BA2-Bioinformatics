@@ -17,15 +17,15 @@ maguk = Sequence.load("maguk-sequences.fasta")
 needlemanwunsch = Alignment(
 	# "ABCDEF",
 	# "ABABABA",
-	pdz[0],
-	pdz[1],
+	# pdz[0],
+	# pdz[1],
 	# "ISALIGNED",
 	# "THISLINE",	
 	# "CARS",
 	# "CATS",
-	# maguk[0],
-	# maguk[1],
-	blosum62, 10, 5, Alignment.LOCAL)
+	maguk[0],
+	maguk[1],
+	blosum62, 10, 1, Alignment.GLOBAL)
 
 needlemanwunsch.align()
 	
