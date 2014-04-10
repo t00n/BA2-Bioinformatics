@@ -50,23 +50,9 @@ else:
 
 print("Please wait...")
 
-needlemanwunsch = Alignment(
-	seqA,
-	seqB,
-	# "ABCDEF",
-	# "ABABABA",
-	# pdz[0],
-	# pdz[1],
-	# "ISALIGNED",
-	# "THISLINE",	
-	# "CARS",
-	# "CATS",
-	# maguk[0],
-	# maguk[1],
-	matrix, gap_open, gap_extend, alignType)
-
-needlemanwunsch.align()
+alignment = Alignment(seqA, seqB,	matrix, gap_open, gap_extend, alignType)
+alignment.align()
 
 print("Done.")
 
-print(needlemanwunsch, file = sys.stderr)
+print(alignment, file = sys.stderr)

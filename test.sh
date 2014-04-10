@@ -16,7 +16,7 @@ elif [ $1 == "global" ]; then
 	size=5
 fi
 
-echo -e "CAREFUL : THIS program may take a while to finish as it tests all sequences against each other\n"
+echo -e "WARNING : This program may take a while to finish as it tests all sequences against each other\n"
 
 echo "type: " $type
 echo "matrix: " $matrix
