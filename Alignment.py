@@ -8,6 +8,7 @@ class Alignment:
 		self.gap_start = gap_start
 		self.gap_extend = gap_extend
 		self.type = type
+		self.maxScore = 0
 		self.result = []
 
 		if (self.type == self.GLOBAL):
@@ -25,30 +26,42 @@ class Alignment:
 		if (self.type == self.GLOBAL):
 			for i in range(1, len(self.seqA)+1):
 				self.S[i][0] = - self.gap_start - (i-1) * self.gap_extend
+				self.V[i][0] = self.S[i][0]
+				self.W[i][0] = self.S[i][0]
 
 			for j in range(1, len(self.seqB)+1):
 				self.S[0][j] = - self.gap_start - (j-1) * self.gap_extend
+				self.V[0][j] = self.S[0][j]
+				self.W[0][j] = self.S[0][j]
 
 	def __repr__(self):
 		ret = ""
 		for i in range(0, len(self.result)):
 			ret += "Result #" + str(i) + "\n" # result number
 			ret += self.result[i][0] + '\n' # sequence A
-			cpt = 0
+			identity = 0
+			similarity = 0
+			gap = 0
 			# lalign style notation ":" for identity, "." for similarity, " " for a gap
 			for j in range(0, len(self.result[i][0])):
 				# identiy
 				if (self.result[i][0][j] == self.result[i][1][j]):
 					ret += ':'
-					cpt += 1
+					identity += 1
+					similarity += 1
 				# gap
 				elif (self.result[i][0][j] == '-' or self.result[i][1][j] == '-'):
 					ret += ' '
+					gap += 1
 				# similarity
 				else:
 					ret += '.'
+					similarity += 1
 			ret += '\n' + self.result[i][1] + '\n' # sequence B
-			ret += str(round(100*cpt/len(self.result[i][0]), 1)) + "% identity\n" # % identity
+			ret += str(round(100*identity/len(self.result[i][0]), 1)) + "% identity\n" # % identity
+			ret += str(round(100*similarity/len(self.result[i][0]), 1)) + "% similarity\n" # % similarity
+			ret += "Length : " + str(len(self.result[i][0])) + "\n"
+			ret += "Local score : " + str(self.result[i][2]) + "\n"
 		ret += "Global score : " + str(self.S[self.max[0]][self.max[1]]) # global score
 		return ret
 
@@ -77,27 +90,35 @@ class Alignment:
 					self.max = [i, j]
 			
 	# traceback the path we ran through
-	def findAlignments(self, i, j, alignmentA, alignmentB):
-		if (self.type == self.GLOBAL and (i > 0 or j > 0) or (self.type == self.LOCAL and self.S[i][j] > 0)):
+	def findAlignments(self, i, j, alignmentA, alignmentB, score):
+		if ((self.type == self.GLOBAL and (i > 0 or j > 0)) or (self.type == self.LOCAL and self.S[i][j] > 0)):
+			print(str(i) + ":" + str(j))
 			# alignement : diagonal
 			if (i > 0 and j > 0 and self.S[i][j] == self.S[i-1][j-1] + self.scoreMatrix[self.seqA[i-1], self.seqB[j-1]]):
-				self.findAlignments(i-1, j-1, self.seqA[i-1] + alignmentA, self.seqB[j-1] + alignmentB)
+				print("align")
+				self.findAlignments(i-1, j-1, self.seqA[i-1] + alignmentA, self.seqB[j-1] + alignmentB, score + self.S[i][j])
 			# gap in sequence B : left
-			elif (i > 0 and self.S[i][j] == self.V[i][j]):
-				self.findAlignments(i-1, j, self.seqA[i-1] + alignmentA, "-" + alignmentB)
+			if (i > 0 and self.S[i][j] == self.V[i][j]):
+				print("gap B")
+				self.findAlignments(i-1, j, self.seqA[i-1] + alignmentA, "-" + alignmentB, score + self.S[i][j])
 			# gap in sequence A : top
-			elif (j > 0 and self.S[i][j] == self.W[i][j]):
-				self.findAlignments(i, j-1, "-" + alignmentA, self.seqB[j-1] + alignmentB)
+			if (j > 0 and self.S[i][j] == self.W[i][j]):
+				print("gap A")
+				self.findAlignments(i, j-1, "-" + alignmentA, self.seqB[j-1] + alignmentB, score + self.S[i][j])
 
 		# end of backtracking : we are back in S[0][0]
 		else:
 			# if (self.type == self.LOCAL):
 			# 	alignmentA = self.seqA[i-1] + alignmentA
 			# 	alignmentB = self.seqB[j-1] + alignmentB
-			self.result.append([alignmentA, alignmentB])
+			if (score > self.maxScore):
+				self.maxScore = score
+				self.result.clear()
+			if (score == self.maxScore):
+				self.result.append((alignmentA, alignmentB, score))
 
 	def align(self):
 		self.computeScores()
 		if (self.type == self.GLOBAL):
 			self.max = [len(self.seqA), len(self.seqB)]
-		self.findAlignments(self.max[0], self.max[1], "", "")
+		self.findAlignments(self.max[0], self.max[1], "", "", 0)
