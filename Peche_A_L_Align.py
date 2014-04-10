@@ -13,17 +13,12 @@ while (not (alignType == Alignment.LOCAL or alignType == Alignment.GLOBAL)):
 	alignType = str(input("Choose the alignment type (enter 'local' or 'global')\n>"))
 
 # scoring matrix
-substitutionMatrixes = []
-for file in glob.glob("*.txt"):
-	substitutionMatrixes.append(file)
+for file in glob.glob("scores/*"):
+	print(file)
 
-matrix = ""
-while (matrix not in substitutionMatrixes):
-	for file in substitutionMatrixes:
-		print(file)
-	matrix = str(input("Which substitution matrix do you want to use (enter the file name) ?\n>"))
+matrix = str(input("Which substitution matrix do you want to use (enter only the file name, not the path) ?\n>"))
 
-matrix = Score.load(matrix)
+matrix = Score.load("scores/"+matrix)
 
 gap_open = -1
 while(gap_open < 0):
@@ -34,7 +29,7 @@ while(gap_extend < 0):
 	gap_extend = int(input("Enter the extending gap penalty (>=0)\n>"))
 
 # sequences
-seqA = str(input("Enter the first sequence as a filename or a string embedded in quotes (ex: filename.fasta or \"THISLINE\")\n>"))
+seqA = str(input("Enter the first sequence as a filename or a string embedded in quotes (ex: PDZ-sequences.fasta or \"THISLINE\")\n>"))
 
 if (seqA[0] == "\""):
 	seqA = seqA[1:-1]
@@ -43,7 +38,7 @@ else:
 	i = int(input("Which sequence in the file ? (0 -> " + str(len(sequences)-1) + ")\n>"))
 	seqA = sequences[i]
 
-seqB = str(input("Enter the first sequence as a filename or a string embedded in quotes (ex: filename.fasta or \"THISLINE\")\n>"))
+seqB = str(input("Enter the first sequence as a filename or a string embedded in quotes (ex: PDZ-sequences.fasta or \"THISLINE\")\n>"))
 
 if (seqB[0] == "\""):
 	seqB = seqB[1:-1]

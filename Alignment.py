@@ -33,8 +33,7 @@ class Alignment:
 
 	def __repr__(self):																		# this method prints :
 		ret = ""
-		for i in range(0, len(self.result)):
-			ret += "Result #" + str(i) + "\n"												# result number
+		for i in range(0, len(self.result)):											# result number
 			ret += self.result[i][0] + '\n' 												# sequence A
 			identity = 0
 			similarity = 0
@@ -56,7 +55,6 @@ class Alignment:
 			ret += str(round(100*similarity/len(self.result[i][0]), 1)) + "% similarity\n" 	# % similarity
 			ret += str(round(100*gap/len(self.result[i][0]), 1)) + "% gap\n"				# % gap
 			ret += "Length : " + str(len(self.result[i][0])) + "\n"
-			#ret += "Local score : " + str(self.result[i][2]) + "\n"
 		ret += "Global score : " + str(self.S[self.max[0]][self.max[1]]) 					# global score
 		return ret
 

@@ -2,7 +2,7 @@
 
 if [ $1 == "local" ]; then
 	type=local
-	matrix=blosum62.txt
+	matrix=pam120.txt
 	gap_open=5
 	gap_extend=1
 	sequences=maguk-sequences.fasta
