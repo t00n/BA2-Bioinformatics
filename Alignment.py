@@ -98,14 +98,7 @@ class Alignment:
 
 		# end of backtracking : we are back in S[0][0]
 		else:
-			# if (self.type == self.LOCAL):
-			# 	alignmentA = self.seqA[i-1] + alignmentA
-			# 	alignmentB = self.seqB[j-1] + alignmentB
-			if (score > self.maxScore):
-				self.maxScore = score
-				self.result.clear()
-			if (score == self.maxScore):
-				self.result.append((alignmentA, alignmentB))
+			self.result.append((alignmentA, alignmentB))
 
 	def align(self):
 		self.computeScores()
