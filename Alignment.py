@@ -84,17 +84,17 @@ class Alignment:
 		return i > 0 and self.S[i][j] == self.V[i][j]
 
 	# traceback the path we ran through
-	def findAlignments(self, i, j, alignmentA, alignmentB, score):
+	def findAlignments(self, i, j, alignmentA, alignmentB):
 		if ((self.type == self.GLOBAL and (i > 0 or j > 0)) or (self.type == self.LOCAL and self.S[i][j] > 0)):
 			# alignement : diagonal
 			if (self.fromDiag(i, j)):
-				self.findAlignments(i-1, j-1, self.seqA[i-1] + alignmentA, self.seqB[j-1] + alignmentB, score + self.S[i][j])
+				self.findAlignments(i-1, j-1, self.seqA[i-1] + alignmentA, self.seqB[j-1] + alignmentB)
 			# gap in sequence B : left
 			if (self.fromLeft(i, j)):
-				self.findAlignments(i-1, j, self.seqA[i-1] + alignmentA, "-" + alignmentB, score + self.S[i][j])
+				self.findAlignments(i-1, j, self.seqA[i-1] + alignmentA, "-" + alignmentB)
 			# gap in sequence A : top
 			if (self.fromTop(i, j)):
-				self.findAlignments(i, j-1, "-" + alignmentA, self.seqB[j-1] + alignmentB, score + self.S[i][j])
+				self.findAlignments(i, j-1, "-" + alignmentA, self.seqB[j-1] + alignmentB)
 
 		# end of backtracking : we are back in S[0][0]
 		else:
@@ -103,5 +103,4 @@ class Alignment:
 	def align(self):
 		self.computeScores()
 		self.result = []
-		self.maxScore = float("-inf")
-		self.findAlignments(self.max[0], self.max[1], "", "", 0)
+		self.findAlignments(self.max[0], self.max[1], "", "")
