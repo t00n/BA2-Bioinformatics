@@ -18,10 +18,12 @@ class Alignment:
 		for i in range(1, len(self.seqA)+1):
 			self.S[i][0] = - self.gap_start - (i-1) * self.gap_extend
 			self.W[i][0] = self.S[i][0]
+			self.V[i][0] = self.S[i][0]
 
 		for j in range(1, len(self.seqB)+1):
 			self.S[0][j] = - self.gap_start - (j-1) * self.gap_extend
 			self.V[0][j] = self.S[0][j]
+			self.W[0][j] = self.S[0][j]
 
 	def __repr__(self):																		# this method prints :
 		ret = ""
@@ -67,7 +69,7 @@ class Alignment:
 				self.S[i][j] = max(
 					self.S[i-1][j-1] + self.scoreMatrix[self.seqA[i-1], self.seqB[j-1]],	# alignment = diagonal
 					self.V[i][j],	# gap in Sequence A = top
-					self.W[i][j],)	# gap in Sequence B = left
+					self.W[i][j])	# gap in Sequence B = left
 
 				if (self.type == self.LOCAL):
 					self.S[i][j] = max(self.S[i][j], 0)
@@ -86,6 +88,7 @@ class Alignment:
 	# traceback the path we ran through
 	def findAlignments(self, i, j, alignmentA, alignmentB):
 		if ((self.type == self.GLOBAL and (i > 0 or j > 0)) or (self.type == self.LOCAL and self.S[i][j] > 0)):
+			print(self.seqA[i-1]+":"+self.seqB[j-1]+":"+str(self.S[i][j])+":"+str(self.S[i-1][j-1] + self.scoreMatrix[self.seqA[i-1], self.seqB[j-1]])+":"+str(self.V[i][j])+":"+str(self.W[i][j]))
 			# alignement : diagonal
 			if (self.fromDiag(i, j)):
 				self.findAlignments(i-1, j-1, self.seqA[i-1] + alignmentA, self.seqB[j-1] + alignmentB)
