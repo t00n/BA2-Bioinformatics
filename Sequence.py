@@ -26,3 +26,25 @@ class Sequence:
 
 	def __len__(self):
 		return len(self.seq)
+
+	def identity(self, other):
+		assert(len(self) == len(other))
+		identity = 0
+		for i in range(0, min(len(self), len(other))):
+			if (self[i] == other[i]):
+				identity += 1
+		return identity*100/max(len(self), len(other))
+
+if __name__ == '__main__':
+	seqA = Sequence("ABCD")
+	seqB = Sequence("ABAB")
+	seqC = Sequence("ABABAC")
+	seqD = Sequence("ABCD")
+	assert(seqA.identity(seqB) == 50)
+	assert(seqA.identity(seqD) == 100)
+
+	try:
+		seqA.identity(seqC)
+	except Exception as e:
+		assert(type(e) is AssertionError)
+
