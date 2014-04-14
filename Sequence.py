@@ -30,21 +30,23 @@ class Sequence:
 	def identity(self, other):
 		assert(len(self) == len(other))
 		identity = 0
-		for i in range(0, min(len(self), len(other))):
-			if (self[i] == other[i]):
-				identity += 1
-		return identity*100/max(len(self), len(other))
+		for i in range(0, len(self)):
+			identity += self[i] == other[i]
+		return identity*100/len(self)
+
+	def distance(self, other):
+		return 100-self.identity(other)
 
 if __name__ == '__main__':
-	seqA = Sequence("ABCD")
-	seqB = Sequence("ABAB")
-	seqC = Sequence("ABABAC")
-	seqD = Sequence("ABCD")
-	assert(seqA.identity(seqB) == 50)
-	assert(seqA.identity(seqD) == 100)
+	seqA = Sequence("ATCKQ")
+	seqB = Sequence("ATCRN")
+	seqC = Sequence("ASCKN")
+	seqD = Sequence("ABABABC")
+	assert(seqA.identity(seqB) == 60)
+	assert(seqA.identity(seqC) == 60)
 
 	try:
-		seqA.identity(seqC)
+		seqA.identity(seqD)
 	except Exception as e:
 		assert(type(e) is AssertionError)
 
