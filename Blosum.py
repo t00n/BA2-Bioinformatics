@@ -1,18 +1,22 @@
 from Sequence import Sequence
 
-def distance(cluster1, cluster2):
-	result = 0
-	for i in range(0, len(cluster1)):
-		for j in range(0, len(cluster2)):
-			result += cluster1[i].identity(cluster2[j]) >= 50 # or 38 or 60
-	return 1-(result/(len(cluster1)*len(cluster2)))
+class Cluster(list):
+	def __init__(self, *args):
+		list.__init__(self, *args)
+
+	def distance(self, other, C):
+		result = 0
+		for seq1 in self:
+			for seq2 in other:
+				result += seq1.identity(seq2) >= C
+		return 1-(result/(len(self)*len(other)))
 
 if __name__ == '__main__':
 	sequences = [ Sequence("TECRQ"), Sequence("SSCRN"), Sequence("SECEN"), Sequence("ATCRN"), Sequence("SDCEQ"), Sequence("ASCKN"), Sequence("ATCKQ") ]
 	clusters = []
 
 	for seq in sequences:
-		clusters.append([seq])
+		clusters.append(Cluster([seq]))
 
 	finished = False
 	while (not finished):
@@ -21,11 +25,9 @@ if __name__ == '__main__':
 		case = None
 		distances = [x[:] for x in [[0]*len(clusters)]*len(clusters)]
 
-		for line in clusters:
-			print(line)
 		for i in range(0, len(clusters)):
 			for j in range(i+1, len(clusters)):
-				value = distance(clusters[i], clusters[j])
+				value = clusters[i].distance(clusters[j], 62)
 				distances[i][j] = value
 				if (value <= minVal and value != 1):
 					minVal = value
@@ -39,13 +41,5 @@ if __name__ == '__main__':
 
 			del clusters[case[1]]
 
-		for line in distances:
-			print(line)
-
-		print("----------------------------------------")
-		if (finished):
-			break
-
-
-	for line in clusters:
-		print(line)
+	for cluster in clusters:
+		print(cluster)
