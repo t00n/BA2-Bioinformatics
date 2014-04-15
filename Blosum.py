@@ -83,7 +83,7 @@ if __name__ == '__main__':
 			for j in range(i+1, len(clusters)):
 				value = distance(clusters[i], clusters[j])
 				distances[i][j] = value
-				if (value < minVal):
+				if (value <= minVal and value != 1):
 					minVal = value
 					case = (i, j)
 				if(value == 0):
