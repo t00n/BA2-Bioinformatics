@@ -1,7 +1,7 @@
 class Score:
-	def __init__(self, matrice, indexes):
+	def __init__(self, matrice):
 		self.matrice = matrice
-		self.indexes = indexes
+		self.indexes = [ "A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", "B", "Z", "X", "*" ]
 	
 	def load(filename):
 		f = open(filename)
@@ -15,7 +15,7 @@ class Score:
 				l = line[1:]
 				matrice.append(list(map(int, l.split())))
 		f.close()
-		return Score(matrice, indexes)
+		return Score(matrice)
 		
 	def __getitem__(self, acide): # acide is a tuple (letter from seq A, letter from seq B)
 		j = self.indexes.index(acide[0]) # get index of letter acide[0]
