@@ -12,11 +12,11 @@ class Cluster(list):
 		return 1-(result/(len(self)*len(other)))
 
 if __name__ == '__main__':
-	sequences = [ Sequence("TECRQ"), Sequence("SSCRN"), Sequence("SECEN"), Sequence("ATCRN"), Sequence("SDCEQ"), Sequence("ASCKN"), Sequence("ATCKQ") ]
+	sequences = [ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]
 	clusters = []
 
 	for seq in sequences:
-		clusters.append(Cluster([seq]))
+		clusters.append(Cluster([Sequence(seq)]))
 
 	finished = False
 	while (not finished):

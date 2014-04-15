@@ -1,6 +1,6 @@
-class Sequence:
-	def __init__(self, seq):
-		self.seq = seq
+class Sequence(str):
+	def __new__(cls, *args, **kw):
+		return str.__new__(cls, *args, **kw)
 		
 	def load(filename):
 		f = open(filename)
@@ -17,15 +17,6 @@ class Sequence:
 			sequences.append(Sequence(seq))
 		f.close()
 		return sequences
-	
-	def __getitem__(self, index):
-		return self.seq[index]
-
-	def __repr__(self):
-		return self.seq
-
-	def __len__(self):
-		return len(self.seq)
 
 	def identity(self, other):
 		assert(len(self) == len(other))
