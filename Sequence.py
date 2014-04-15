@@ -1,3 +1,5 @@
+import re
+
 class Sequence(str):
 	def __new__(cls, *args, **kw):
 		return str.__new__(cls, *args, **kw)
@@ -15,6 +17,15 @@ class Sequence(str):
 				seq = ""
 		if (seq != ""):
 			sequences.append(Sequence(seq))
+		f.close()
+		return sequences
+
+	def loadFromBlocks(filename):
+		f = open(filename)
+		pattern = re.compile(" ([A-Z]*) ")
+		sequences = []
+		for line in f:
+			sequences.append(Sequence(line[26:].split()[0]))
 		f.close()
 		return sequences
 
@@ -41,3 +52,7 @@ if __name__ == '__main__':
 	except Exception as e:
 		assert(type(e) is AssertionError)
 
+	blocks = Sequence.loadFromBlocks("blocks/TKC PR00109A")
+	print(len(blocks))
+	for block in blocks:
+		print(block)

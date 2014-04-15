@@ -47,7 +47,9 @@ class Blosum(Score):
 				del self.clusters[case[1]]
 
 if __name__ == '__main__':
-	sequences = [ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]
-	blosum = Blosum(sequences, 50)
+	# sequences = [ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]
+	sequences = Sequence.loadFromBlocks("blocks/TKC PR00109A")
+
+	blosum = Blosum(sequences, 70)
 	for cluster in blosum.clusters:
 		print(cluster)
