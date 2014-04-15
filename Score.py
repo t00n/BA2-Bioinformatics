@@ -1,35 +1,42 @@
 class Score:
-	def __init__(self, matrice):
-		self.matrice = matrice
-		self.indexes = [ "A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", "B", "Z", "X", "*" ]
+	INDEXES = [ "A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", "B", "Z", "X", "*" ]
+	def __init__(self, matrix = [[]], indexes = INDEXES):
+		self.matrix = matrix
+		self.indexes = indexes
 	
 	def load(filename):
 		f = open(filename)
-		matrice = []
+		matrix = []
+		indexes = Score.INDEXES
 		for line in f:
 			if line[0] == '#':
 				pass
-			elif line[0] == ' ':
+			elif line[0] == ' ' or line[0] == '\t':
 				indexes = line.split()
-			else:
+			elif line[0].isalpha():
 				l = line[1:]
-				matrice.append(list(map(int, l.split())))
+				matrix.append(list(map(int, l.split())))
 		f.close()
-		return Score(matrice)
+		assert(len(indexes) == 24)
+		assert(len(matrix) == len(indexes) - 1)
+		return Score(matrix, indexes)
 		
 	def __getitem__(self, acide): # acide is a tuple (letter from seq A, letter from seq B)
-		j = self.indexes.index(acide[0]) # get index of letter acide[0]
-		i = self.indexes.index(acide[1]) # get index of letter acide[1]
-		return self.matrice[i][j]
+		i = self.indexes.index(acide[0]) # get index of letter acide[0]
+		j = self.indexes.index(acide[1]) # get index of letter acide[1]
+		return self.matrix[i][j]
 
 	def __repr__(self):
-		ret = ""
+		ret = "  "
 		for char in self.indexes:
 			ret += ' ' + char + ' '
 		ret += '\n'
-		for line in self.matrice:
+		i = 0
+		for line in self.matrix:
+			ret += self.indexes[i] + ' '
+			i+=1
 			for char in line:
-				if (char >= 0):
+				if (char >= 0): # for a good alignment
 					ret += ' '
 				ret += str(char) + ' '
 			ret += '\n'
@@ -41,3 +48,4 @@ if __name__ == '__main__':
 	assert(test["Q","H"] == 0)
 	assert(test["X","X"] == -1)
 	assert(test["X","P"] == -2)
+	print(test)

@@ -14,14 +14,13 @@ class Cluster(list):
 
 class Blosum(Score):
 	def __init__(self, sequences, threshold):
+		Score.__init__(self)
 		self.threshold = threshold
 		self.clusters = []
 		for seq in sequences:
 			self.clusters.append(Cluster([Sequence(seq)]))
 
 		self.makeClusters()
-		for cluster in self.clusters:
-			print(cluster)
 
 	def makeClusters(self):
 		finished = False
@@ -49,4 +48,6 @@ class Blosum(Score):
 
 if __name__ == '__main__':
 	sequences = [ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]
-	blosum = Blosum(sequences, 62)
+	blosum = Blosum(sequences, 50)
+	for cluster in blosum.clusters:
+		print(cluster)
