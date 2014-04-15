@@ -49,7 +49,7 @@ def distance(cluster1, cluster2):
 	result = 0
 	for i in range(0, len(cluster1)):
 		for j in range(0, len(cluster2)):
-			result += cluster1[i].distance(cluster2[j]) <= 38 # or 38 or 60
+			result += cluster1[i].identity(cluster2[j]) >= 50 # or 38 or 60
 	return 1-(result/(len(cluster1)*len(cluster2)))
 
 def global_dissim(clusters):
@@ -70,7 +70,8 @@ if __name__ == '__main__':
 	for seq in sequences:
 		clusters.append([seq])
 
-	while (len(clusters) > 0):
+	finished = False
+	while (not finished):
 		minVal = 1
 		finished = True
 		case = None
@@ -82,7 +83,7 @@ if __name__ == '__main__':
 			for j in range(i+1, len(clusters)):
 				value = distance(clusters[i], clusters[j])
 				distances[i][j] = value
-				if (value <= minVal):
+				if (value < minVal):
 					minVal = value
 					case = (i, j)
 				if(value == 0):
@@ -97,10 +98,6 @@ if __name__ == '__main__':
 		for line in distances:
 			print(line)
 
-		for line in clusters:
-			print(line)
-
-		print(global_dissim(clusters))
 		print("----------------------------------------")
 		if (finished):
 			break
