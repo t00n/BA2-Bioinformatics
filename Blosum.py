@@ -53,12 +53,15 @@ def distance(cluster1, cluster2):
 	return result/(len(cluster1)*len(cluster2))
 
 def global_dissim(clusters):
-	result = 0
-	for c1 in clusters:
-		for c2 in clusters:
-			result += distance(c1, c2)
+	result = True
+	for cluster in clusters:
+		tmp_result = 0
+		for seq1 in cluster:
+			for seq2 in cluster:
+				tmp_result = max(seq1.distance(seq2), tmp_result)
 
-	return result/(len(clusters)*len(clusters))
+		result = tmp_result <= 50 and result
+	return result
 
 if __name__ == '__main__':
 	sequences = [ Sequence("ATCKQ"), Sequence("ATCRN"), Sequence("ASCKN"), Sequence("SSCRN"), Sequence("SDCEQ"), Sequence("SECEN"), Sequence("TECRQ") ]
@@ -67,7 +70,7 @@ if __name__ == '__main__':
 	for seq in sequences:
 		clusters.append([seq])
 
-	while (len(clusters) > 3):
+	while (True):
 		minVal = 100
 		case = None
 		distances = [x[:] for x in [[0]*len(clusters)]*len(clusters)]
@@ -94,6 +97,8 @@ if __name__ == '__main__':
 
 		print(global_dissim(clusters))
 		print("----------------------------------------")
+		if (global_dissim(clusters) == False):
+			break
 
 
 	for line in clusters:
