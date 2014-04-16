@@ -12,12 +12,11 @@ class Cluster(list):
 				result += seq1.identity(seq2) >= C
 		return 1-(result/(len(self)*len(other)))
 
-	def getPairNumber(self, proteinA, proteinB):
+	def getPairRatio(self, column, proteinA, proteinB):
 		cptA, cptB = 0, 0
-		for i in range (0, len(self[0])):
-			for seq in self:
-				cptA += seq[i] == proteinA
-				cptB += seq[i] == proteinB
+		for seq in self:
+			cptA += seq[column] == proteinA
+			cptB += seq[column] == proteinB
 		return (cptA/(len(self)), cptB/(len(self)))
 
 class Blosum(Score):
@@ -61,30 +60,36 @@ class Blosum(Score):
 				del self.clusters[case[1]]
 
 	def compute(self):
-		self.matrix = [x[:] for x in [[float("-inf")]*len(self.indexes)]*len(self.indexes)]
-		for proteinA in self.indexes:
-			for proteinB in self.indexes:
-				pairs = []
-				for cluster in self.clusters:
-					pairs.append(cluster.getPairNumber(proteinA, proteinB))
-				frequencyAB = 0
-				frequencyAA = 0
-				frequencyBB = 0
-				for i in range(0, len(pairs)):
-					for j in range(0, len(pairs)):
-						if (i != j):
-							frequencyAB += pairs[i][0]*pairs[j][1]
-					for j in range(i+1, len(pairs)):
-							frequencyAA += pairs[i][0]*pairs[j][0]
-							frequencyBB += pairs[i][1]*pairs[j][1]
+		self.matrix = [x[:] for x in [[0]*len(self.indexes)]*len(self.indexes)]
+		for a in range(0, len(self.indexes)):
+			proteinA = self.indexes[a]
+			for b in range(a, len(self.indexes)):
+				proteinB = self.indexes[b]
+				for column in range(0, len(self.clusters[0][0])):
+					pairs = []
+					frequencyAB = 0
+					frequencyAA = 0
+					for cluster in self.clusters:
+						pairs.append(cluster.getPairRatio(column, proteinA, proteinB))
 
-				self[proteinA, proteinB] = round(frequencyAB/(len(self.clusters)*len(self.clusters[0][0])), 3)
-				self[proteinA, proteinA] = round(frequencyAA/(len(self.clusters)*len(self.clusters[0][0])), 3)
-				self[proteinB, proteinB] = round(frequencyBB/(len(self.clusters)*len(self.clusters[0][0])), 3)
+					for i in range(0, len(pairs)):
+						for j in range(0, len(pairs)):
+							if (i != j):
+								frequencyAB += pairs[i][0]*pairs[j][1]
+						for j in range(i+1, len(pairs)):
+								frequencyAA += pairs[i][0]*pairs[j][0]
+
+					if (proteinA != proteinB):
+						self[proteinA, proteinB] += frequencyAB/(len(self.clusters)*len(self.clusters[0][0]))
+					else:
+						self[proteinA, proteinA] += frequencyAA/(len(self.clusters)*len(self.clusters[0][0]))
+
+				self[proteinA, proteinB] = round(self[proteinA, proteinB], 3)
+				# self[proteinB, proteinA] = self[proteinA, proteinB]
 
 if __name__ == '__main__':
-	sequences = [ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]
-	# sequences = Sequence.loadFromBlocks("blocks/TKC PR00109A")
+	# sequences = [ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]
+	sequences = Sequence.loadFromBlocks("blocks/TKC PR00109A")
 
 	blosum = Blosum(sequences, 50)
-	# print(blosum)
+	print(blosum)
