@@ -13,7 +13,7 @@ class Cluster(list):
 				result += seq1.identity(seq2) >= C
 		return 1-(result/(len(self)*len(other)))
 
-	def getPairRatio(self, column, proteinA, proteinB):
+	def getProbabilityRatioOf(self, column, proteinA, proteinB):
 		cptA, cptB = 0, 0
 		for seq in self:
 			cptA += seq[column] == proteinA
@@ -35,27 +35,26 @@ class Blosum(Score):
 		Score.__init__(self)
 		self.threshold = threshold
 		self.matrix = [x[:] for x in [[0]*len(self.indexes)]*len(self.indexes)]
+		self.nbOfBlocks = 0
 
 	def __setitem__(self, acides, value): # acide is a tuple (letter from seq A, letter from seq B)
 		i = self.indexes.index(acides[0]) # get index of letter acide[0]
 		j = self.indexes.index(acides[1]) # get index of letter acide[1]
 		self.matrix[i][j] = value
 
-	def addBlock(self, sequences):
+	def addBlocks(self, blocks):
+		for block in blocks:
+			self.addBlock(block)
+
+	def addBlock(self, block):
+		self.nbOfBlocks += 1
 		self.clusters = []
-		for seq in sequences:
+		for seq in block:
 			self.clusters.append(Cluster([Sequence(seq)]))
 
 		self.buildClusters()
-
-		self.randomModel = []
-		for i in range(0, len(self.indexes)):
-			cpt = 0
-			for cluster in self.clusters:
-				cpt += cluster.getProbabilityOf(self.indexes[i])
-			self.randomModel.append(cpt/len(self.clusters))
-
-		self.computeFrequency()
+		self.computeRandomModel()
+		self.computeFrequencies()
 
 	def buildClusters(self):
 		finished = False
@@ -78,10 +77,18 @@ class Blosum(Score):
 			if (case):
 				for seq in self.clusters[case[1]]:
 					self.clusters[case[0]].append(seq)
-
 				del self.clusters[case[1]]
 
-	def computeFrequency(self):
+	def computeRandomModel(self):
+		self.randomModel = []
+		for i in range(0, len(self.indexes)):
+			cpt = 0
+			for cluster in self.clusters:
+				cpt += cluster.getProbabilityOf(self.indexes[i])
+			self.randomModel.append(cpt/len(self.clusters))
+
+
+	def computeFrequencies(self):
 		maxNbOfPairs = len(self.clusters)*(len(self.clusters)-1)*len(self.clusters[0][0])/2
 		for a in range(0, len(self.indexes)):
 			proteinA = self.indexes[a]
@@ -92,7 +99,7 @@ class Blosum(Score):
 				for column in range(0, len(self.clusters[0][0])):
 					pairs = []
 					for cluster in self.clusters:
-						pairs.append(cluster.getPairRatio(column, proteinA, proteinB))
+						pairs.append(cluster.getProbabilityRatioOf(column, proteinA, proteinB))
 
 					for i in range(0, len(pairs)):
 						for j in range(0, len(pairs)):
@@ -102,25 +109,28 @@ class Blosum(Score):
 								frequencyAA += pairs[i][0]*pairs[j][0]
 
 				if (proteinA != proteinB):
-					self[proteinA, proteinB] += log((frequencyAB/maxNbOfPairs)/(self.randomModel[a]*self.randomModel[b]*2), 2) if frequencyAB/maxNbOfPairs != 0 else 0
+					self[proteinA, proteinB] += log((frequencyAB/maxNbOfPairs)/(self.randomModel[a]*self.randomModel[b]), 2) if frequencyAB/maxNbOfPairs != 0 else 0
 				else:
 					self[proteinA, proteinA] += log((frequencyAA/maxNbOfPairs)/(self.randomModel[a]*self.randomModel[a]), 2) if frequencyAA/maxNbOfPairs != 0 else 0
 
-				self[proteinA, proteinB] = round(self[proteinA, proteinB])
+	def computeScores(self):
+		for a in range(0, len(self.indexes)):
+			proteinA = self.indexes[a]
+			for b in range(a, len(self.indexes)):
+				proteinB = self.indexes[b]
+				self[proteinA, proteinB] = round(self[proteinA, proteinB]/self.nbOfBlocks)
 				# self[proteinB, proteinA] = self[proteinA, proteinB]
 
 if __name__ == '__main__':
 	# sequences = [[ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]]
 	sequences = []
 	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109A"))
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109B"))
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109C"))
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109D"))
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109E"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109B"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109C"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109D"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109E"))
 
 	blosum = Blosum(50)
-	for seq in sequences:
-		blosum.addBlock(seq)
-
-	# blosum.computeScore()
+	blosum.addBlocks(sequences)
+	blosum.computeScores()
 	print(blosum)
