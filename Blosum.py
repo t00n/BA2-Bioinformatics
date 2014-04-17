@@ -10,23 +10,25 @@ class Cluster(list):
 		result = 0
 		for seq1 in self:
 			for seq2 in other:
-				result += seq1.identity(seq2) >= C
+				if (seq1.identity(seq2) >= C):
+					result += 1
 		return 1-(result/(len(self)*len(other)))
 
 	def getProbabilityRatioOf(self, column, proteinA, proteinB):
 		cptA, cptB = 0, 0
 		for seq in self:
-			cptA += seq[column] == proteinA
-			cptB += seq[column] == proteinB
+			if (seq[column] == proteinA):
+				cptA += 1
+			if (seq[column] == proteinB):
+				cptB += 1
 		return (cptA/(len(self)), cptB/(len(self)))
 
 	def getProbabilityOf(self, acide):
 		ret = 0
 		for seq in self:
-			cpt = 0
 			for a in seq:
-				cpt += a == acide
-			ret += cpt
+				if (a == acide):
+					ret += 1
 		return ret/(len(self)*len(self[0]))
 
 
@@ -62,22 +64,18 @@ class Blosum(Score):
 			minVal = 1
 			finished = True
 			case = None
-			distances = [x[:] for x in [[0]*len(self.clusters)]*len(self.clusters)]
 
 			for i in range(0, len(self.clusters)):
 				for j in range(i+1, len(self.clusters)):
 					value = self.clusters[i].distance(self.clusters[j], self.threshold)
-					distances[i][j] = value
-					if (value <= minVal and value != 1):
+					if (value != 1 and value <= minVal):
 						minVal = value
 						case = (i, j)
-					if(value == 0):
-						finished = False
+						if(value == 0):
+							finished = False
 
-			if (case):
-				for seq in self.clusters[case[1]]:
-					self.clusters[case[0]].append(seq)
-				del self.clusters[case[1]]
+			self.clusters[case[0]].extend(self.clusters[case[1]])
+			del self.clusters[case[1]]
 
 	def computeRandomModel(self):
 		self.randomModel = []

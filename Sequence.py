@@ -22,7 +22,6 @@ class Sequence(str):
 
 	def loadFromBlocks(filename):
 		f = open(filename)
-		pattern = re.compile(" ([A-Z]*) ")
 		sequences = []
 		for line in f:
 			sequences.append(Sequence(line[26:].split()[0]))
@@ -30,11 +29,13 @@ class Sequence(str):
 		return sequences
 
 	def identity(self, other):
-		assert(len(self) == len(other))
-		identity = 0
-		for i in range(0, len(self)):
-			identity += self[i] == other[i]
-		return identity*100/len(self)
+		if (len(self) == len(other)):
+			identity = 0
+			for i in range(0, len(self)):
+				if (self[i] == other[i]):
+					identity += 1
+			return identity*100/len(self)
+		return 0
 
 	def distance(self, other):
 		return 100-self.identity(other)
@@ -47,12 +48,4 @@ if __name__ == '__main__':
 	assert(seqA.identity(seqB) == 60)
 	assert(seqA.identity(seqC) == 60)
 
-	try:
-		seqA.identity(seqD)
-	except Exception as e:
-		assert(type(e) is AssertionError)
-
-	blocks = Sequence.loadFromBlocks("blocks/TKC PR00109A")
-	print(len(blocks))
-	for block in blocks:
-		print(block)
+	assert(seqA.identity(seqD) == 0)
