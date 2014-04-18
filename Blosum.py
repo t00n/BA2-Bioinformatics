@@ -117,18 +117,18 @@ class Blosum(Score):
 			for b in range(a, len(self.indexes)):
 				proteinB = self.indexes[b]
 				self[proteinA, proteinB] = round(self[proteinA, proteinB]/self.nbOfBlocks)
-				# self[proteinB, proteinA] = self[proteinA, proteinB]
+				self[proteinB, proteinA] = self[proteinA, proteinB]
 
 if __name__ == '__main__':
 	# sequences = [[ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]]
 	sequences = []
 	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109A"))
-	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109B"))
-	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109C"))
-	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109D"))
-	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109E"))
+	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109B"))
+	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109C"))
+	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109D"))
+	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109E"))
 
-	blosum = Blosum(50)
+	blosum = Blosum(40)
 	blosum.addBlocks(sequences)
 	blosum.computeScores()
 	print(blosum)

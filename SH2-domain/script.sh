@@ -1,0 +1,1 @@
+sed ':a;N;$!ba;s/>/\n>/g' to-be-aligned.fasta | grep '^[A-Z]*$' | sed ':a;N;$!ba;s/\n\n/|/g' | sed ':a;N;$!ba;s/\n//g' | tr '|' '\n'
