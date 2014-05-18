@@ -111,7 +111,8 @@ if __name__ == '__main__':
 
 	# f = open("blosum40-TKC.txt", mode="w")
 	# f = open("blosum70-TKC.txt", mode="w")
-	f = open("blosum40-SH2.txt", mode="w")
+	# f = open("blosum40-SH2.txt", mode="w")
 	# f = open("blosum70-SH2.txt", mode="w")
-	print(blosum, file = f)
-	f.close()
+	# print(blosum, file = f)
+	print(blosum)
+	# f.close()

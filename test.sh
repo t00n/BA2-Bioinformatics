@@ -5,14 +5,14 @@ if [ $1 == "local" ]; then
 	matrix=pam120.txt
 	gap_open=5
 	gap_extend=1
-	sequences=maguk-sequences.fasta
+	sequences=sequences/maguk-sequences.fasta
 	size=1
 elif [ $1 == "global" ]; then
 	type=global
 	matrix=blosum62.txt
 	gap_open=5
 	gap_extend=2
-	sequences=PDZ-sequences.fasta
+	sequences=sequences/PDZ-sequences.fasta
 	size=5
 fi
 
