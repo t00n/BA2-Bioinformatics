@@ -92,13 +92,26 @@ class Blosum(Score):
 
 if __name__ == '__main__':
 	sequences = []
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109A"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109A"))
 	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109B"))
 	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109C"))
 	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109D"))
 	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109E"))
 
+	sequences.append(Sequence.loadFromBlocks("blocks/SH2 PR00401A"))
+	sequences.append(Sequence.loadFromBlocks("blocks/SH2 PR00401B"))
+	sequences.append(Sequence.loadFromBlocks("blocks/SH2 PR00401C"))
+	sequences.append(Sequence.loadFromBlocks("blocks/SH2 PR00401D"))
+	sequences.append(Sequence.loadFromBlocks("blocks/SH2 PR00401E"))
+
 	blosum = Blosum(40)
+	# blosum = Blosum(70)
 	blosum.addBlocks(sequences)
 	blosum.computeScores()
-	print(blosum)
+
+	# f = open("blosum40-TKC.txt", mode="w")
+	# f = open("blosum70-TKC.txt", mode="w")
+	f = open("blosum40-SH2.txt", mode="w")
+	# f = open("blosum70-SH2.txt", mode="w")
+	print(blosum, file = f)
+	f.close()
