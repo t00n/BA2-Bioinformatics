@@ -1,5 +1,3 @@
-from Score import *
-from Sequence import *
 from Alignment import *
 import glob
 import sys
@@ -13,12 +11,12 @@ while (not (alignType == Alignment.LOCAL or alignType == Alignment.GLOBAL)):
 	alignType = str(input("Choose the alignment type (enter 'local' or 'global')\n>"))
 
 # scoring matrix
-for file in glob.glob("scores/*"):
+for file in glob.glob("scoring-matrices/*"):
 	print(file)
 
 matrix = str(input("Which substitution matrix do you want to use (enter only the file name, not the path) ?\n>"))
 
-matrix = Score.load("scores/"+matrix)
+matrix = Score.load("scoring-matrices/"+matrix)
 
 gap_open = -1
 while(gap_open < 0):

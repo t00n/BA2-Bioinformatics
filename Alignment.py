@@ -1,3 +1,6 @@
+from Score import *
+from Sequence import *
+
 class Alignment:
 	LOCAL = "local"
 	GLOBAL = "global"
@@ -88,7 +91,6 @@ class Alignment:
 	# traceback the path we ran through
 	def findAlignments(self, i, j, alignmentA, alignmentB):
 		if ((self.type == self.GLOBAL and (i > 0 or j > 0)) or (self.type == self.LOCAL and self.S[i][j] > 0)):
-			print(self.seqA[i-1]+":"+self.seqB[j-1]+":"+str(self.S[i][j])+":"+str(self.S[i-1][j-1] + self.scoreMatrix[self.seqA[i-1], self.seqB[j-1]])+":"+str(self.V[i][j])+":"+str(self.W[i][j]))
 			# alignement : diagonal
 			if (self.fromDiag(i, j)):
 				self.findAlignments(i-1, j-1, self.seqA[i-1] + alignmentA, self.seqB[j-1] + alignmentB)

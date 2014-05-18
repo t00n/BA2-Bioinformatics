@@ -43,7 +43,7 @@ class Score:
 		return ret
 
 if __name__ == '__main__':
-	test = Score.load("scores/blosum62.txt")
+	test = Score.load("scoring-matrices/blosum62.txt")
 	assert(test["A","A"] == 4)
 	assert(test["Q","H"] == 0)
 	assert(test["X","X"] == -1)

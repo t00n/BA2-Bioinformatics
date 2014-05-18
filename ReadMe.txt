@@ -4,7 +4,7 @@
 * Professeur : Tom Lenaerts
 * Assistants : Catharina Olsen et Elisa Cilia
 
-Projet 1 & 2 : Alignements locaux et globaux de séquences et création de matrices de substitution BLOSUM
+Projet 1 : Alignements locaux et globaux de séquences
 
 A) Test prédéfini de Peche à l'Align : l'outil d'alignement de séquences
 
@@ -56,7 +56,7 @@ B) Utilisation de Peche à l'Align : l'outil d'alignement de séquences
 			* la matrice de substitution (à choisir parmi tous les fichiers du répertoire "scores/")
 			* la pénalité d'ouverture d'un gap
 			* la pénalité d'extension d'un gap
-			* la séquence A sous forme d'un nom de fichier ou d'une chaine de caractères entourée de guillements (exemple: PDK-sequences.fasta ou "THISLINE")
+			* la séquence A sous forme d'un nom de fichier ou d'une chaine de caractères entourée de guillemets (exemple: PDK-sequences.fasta ou "THISLINE")
 			* la séquence B (cf séquence A)
 
 	4) les résultats affichés sont

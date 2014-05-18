@@ -28,7 +28,7 @@ for i in $(seq 0 $size); do
 	for j in $(seq 0 $size); do
 		if [ $i -ne $j ]; then
 			echo -e "sequence #"$i " against sequence #"$j "\n"
-			echo -e "$type\n$matrix\n$gap_open\n$gap_extend\n$sequences\n$i\n$sequences\n$j\n" | python Peche_A_L_Align.py > /dev/null
+			echo -e "$type\n$matrix\n$gap_open\n$gap_extend\n$sequences\n$i\n$sequences\n$j\n" | python3 Peche_A_L_Align.py > /dev/null
 		fi
 	done
 done
