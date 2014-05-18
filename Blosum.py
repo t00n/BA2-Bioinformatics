@@ -1,36 +1,7 @@
 from Sequence import Sequence
 from Score import Score
+from Cluster import Cluster
 from math import log
-
-class Cluster(list):
-	def __init__(self, *args):
-		list.__init__(self, *args)
-
-	def distance(self, other, C):
-		result = 0
-		for seq1 in self:
-			for seq2 in other:
-				if (seq1.identity(seq2) >= C):
-					result += 1
-		return 1-(result/(len(self)*len(other)))
-
-	def getProbabilityRatioOf(self, column, proteinA, proteinB):
-		cptA, cptB = 0, 0
-		for seq in self:
-			if (seq[column] == proteinA):
-				cptA += 1
-			if (seq[column] == proteinB):
-				cptB += 1
-		return (cptA/(len(self)), cptB/(len(self)))
-
-	def getProbabilityOf(self, acide):
-		ret = 0
-		for seq in self:
-			for a in seq:
-				if (a == acide):
-					ret += 1
-		return ret/(len(self)*len(self[0]))
-
 
 class Blosum(Score):
 	def __init__(self, threshold):
@@ -56,7 +27,7 @@ class Blosum(Score):
 
 		self.buildClusters()
 		self.computeRandomModel()
-		self.computeFrequencies()
+		self.computeEvolutionaryModel()
 
 	def buildClusters(self):
 		finished = False
@@ -82,11 +53,11 @@ class Blosum(Score):
 		for i in range(0, len(self.indexes)):
 			cpt = 0
 			for cluster in self.clusters:
-				cpt += cluster.getProbabilityOf(self.indexes[i])
+				cpt += cluster.getFrequencyOf(self.indexes[i])
 			self.randomModel.append(cpt/len(self.clusters))
 
 
-	def computeFrequencies(self):
+	def computeEvolutionaryModel(self):
 		maxNbOfPairs = len(self.clusters)*(len(self.clusters)-1)*len(self.clusters[0][0])/2
 		for a in range(0, len(self.indexes)):
 			proteinA = self.indexes[a]
@@ -97,7 +68,7 @@ class Blosum(Score):
 				for column in range(0, len(self.clusters[0][0])):
 					pairs = []
 					for cluster in self.clusters:
-						pairs.append(cluster.getProbabilityRatioOf(column, proteinA, proteinB))
+						pairs.append((cluster.getFrequencyInColumn(column, proteinA), cluster.getFrequencyInColumn(column, proteinB)))
 
 					for i in range(0, len(pairs)):
 						for j in range(0, len(pairs)):
@@ -120,13 +91,12 @@ class Blosum(Score):
 				self[proteinB, proteinA] = self[proteinA, proteinB]
 
 if __name__ == '__main__':
-	# sequences = [[ "TECRQ", "SSCRN", "SECEN", "ATCRN", "SDCEQ", "ASCKN", "ATCKQ" ]]
 	sequences = []
 	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109A"))
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109B"))
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109C"))
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109D"))
-	sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109E"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109B"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109C"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109D"))
+	# sequences.append(Sequence.loadFromBlocks("blocks/TKC PR00109E"))
 
 	blosum = Blosum(40)
 	blosum.addBlocks(sequences)

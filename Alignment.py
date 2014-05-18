@@ -56,7 +56,7 @@ class Alignment:
 		return ret
 
 	# fill 3 matrixes
-	def computeScores(self):
+	def computeMatrices(self):
 		self.max = [len(self.seqA), len(self.seqB)]
 		# compute scores : gap score for sequence A then gap score for sequence B then max score (gaps or alignement)
 		for i in range(1, len(self.seqA)+1):
@@ -106,6 +106,6 @@ class Alignment:
 			self.result.append((alignmentA, alignmentB))
 
 	def align(self):
-		self.computeScores()
+		self.computeMatrices()
 		self.result = []
 		self.findAlignments(self.max[0], self.max[1], "", "")
