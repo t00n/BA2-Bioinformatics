@@ -9,7 +9,7 @@ class Sequence(str):
 		sequences = []
 		seq = ""
 		for line in f:
-			if line[0].isalpha():
+			if line[0] != '>':
 				seq += line[:-1]
 			else:
 				if (seq != ""):
