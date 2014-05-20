@@ -13,12 +13,12 @@ class Score:
 				pass
 			elif line[0] == ' ' or line[0] == '\t':
 				indexes = line.split()
-			elif line[0].isalpha():
+			elif line[0].isalpha() or line[0] == '*' or line[0] == '-':
 				l = line[1:]
 				matrix.append(list(map(int, l.split())))
 		f.close()
 		assert(len(indexes) == 24)
-		assert(len(matrix) == len(indexes) - 1)
+		assert(len(matrix) == len(indexes))
 		return Score(matrix, indexes)
 		
 	def __getitem__(self, acide): # acide is a tuple (letter from seq A, letter from seq B)
