@@ -15,7 +15,7 @@ class Cluster(list):
 		for seq in self:
 			if (seq[column] == acide):
 				cpt += 1
-		return cpt/len(self)
+		return cpt/(len(self)+1)
 
 	def getFrequencyOf(self, acide):
 		ret = 0
