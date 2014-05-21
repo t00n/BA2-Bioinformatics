@@ -11,11 +11,14 @@ class Cluster(list):
 		return 1-(result/(len(self)*len(other)))
 
 	def getFrequencyInColumn(self, column, acide):
+		return self.getNumberInColumn(column, acide)/len(self)
+
+	def getNumberInColumn(self, column, acide):
 		cpt = 0
 		for seq in self:
 			if (seq[column] == acide):
 				cpt += 1
-		return cpt/(len(self)+1)
+		return cpt
 
 	def getFrequencyOf(self, acide):
 		ret = 0
