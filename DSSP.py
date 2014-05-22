@@ -40,12 +40,12 @@ class DSSPData(list):
             elif(start):
                 chain = line[11:12].upper()
                 aa = line[13:14].upper()
-                if (chain in data and aa not in ["B", "Z", "X", "J"]):
+                if (chain in data and aa not in "BZXJ"):
                     struct = line[16:17].upper()
                     data[chain].sequence += aa
-                    if (struct in ["H", "G", "I"]):
+                    if (struct in "HGI"):
                         data[chain].structure += "H"
-                    elif (struct in ["C", "S", "B", " "]):
+                    elif (struct in "CSB "):
                         data[chain].structure += "C"
                     else:
                         data[chain].structure += struct
@@ -62,9 +62,9 @@ class InfoData:
             filename = line[:4]
             seqnum = line[4:5]
             if (filename not in files):
-                files[filename] = []
+                files[filename] = ""
             if (seqnum not in files[filename]):
-                files[filename].append(seqnum)
+                files[filename] += seqnum
         CATH_info.close()
         return files
 
@@ -74,10 +74,5 @@ if __name__ == '__main__':
     dssp = DSSPData()
     for filename in sorted(files.keys()):
         dssp.loadFromFile(filename, files[filename])
-    cpt = 0
     for line in dssp:
         print(line)
-        cpt += len(line.sequence)
-
-    print(len(dssp))
-    print(cpt)
