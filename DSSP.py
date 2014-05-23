@@ -40,7 +40,7 @@ class DSSPData(list):
             elif(start):
                 chain = line[11:12].upper()
                 aa = line[13:14].upper()
-                if (chain in data and aa not in "BZXJ"):
+                if (chain in data and aa not in "BZXJOU"):
                     struct = line[16:17].upper()
                     data[chain].sequence += aa
                     if (struct in "HGI"):
