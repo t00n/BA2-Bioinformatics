@@ -37,9 +37,10 @@ class Profile:
 					# qab = pa*pb*exp(0.8*self.score.matrix[acide][b])
 					gua += fub*exp(self.score.matrix[acide][b])
 				gua = gua * pa
-				q = (alpha*self.cluster.getFrequencyInColumn(column, self.score.indexes[acide])+beta*pa)/(alpha+beta)
-				pssm[column][acide] = round(log10(q/gua), 3)
-				# err_rel += abs(log10(q/gua)-pssm[column][acide])
+				fua = self.cluster.getFrequencyInColumn(column, self.score.indexes[acide])
+				q = (alpha*fua+beta*gua)/(alpha+beta)
+				pssm[column][acide] = round(log10(q/pa), 3)
+				# err_rel += abs(log10(q/pa)-pssm[column][acide])
 		print(acides)
 		for line in pssm:
 			print(line)
