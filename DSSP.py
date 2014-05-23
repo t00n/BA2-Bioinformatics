@@ -74,5 +74,7 @@ if __name__ == '__main__':
     dssp = DSSPData()
     for filename in sorted(files.keys()):
         dssp.loadFromFile(filename, files[filename])
+    output = open(ROOT_DIR + "summary.txt", "w")
     for line in dssp:
-        print(line)
+        print(line, file=output)
+    output.close()
