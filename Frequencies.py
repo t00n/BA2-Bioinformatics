@@ -63,11 +63,11 @@ class Frequencies:
 	def self_info(self, S , R):
 		s = self.structures.index(S)
 		r = self.acides.index(R)
-		fsr = self.FSR[r][s] # number of structure j for acide i
-		fnsr = sum(self.FSR[r])-fsr # number of any structure for acide minus number of structure j for that acid i
+		fsr = self.FSR[r][s] # number of structure s for acide r
+		fnsr = sum(self.FSR[r])-fsr # number of any structure for acide r minus number of structure j for that acid r
 		fs = sum([x[s] for x in self.FSR]) # number of structure j
 		fns = sum(sum(x) for x in self.FSR) - fs # number of any structure minus number of structure j
-		return round(log10(fsr/fnsr) + log10(fns/fs), 2)
+		return log10(fsr/fnsr) + log10(fns/fs)
 
 	def local_info(self, S, Rj, m, Rjm):
 		aa = self.acides.index(Rj)
@@ -77,7 +77,21 @@ class Frequencies:
 		fnsrr = sum([x[:][m][bb] for x in self.FSR2[aa]]) - fsrr
 		fsr = self.FSR[aa][s]
 		fnsr = sum(self.FSR[aa]) - fsr
-		return round(log10(fsrr/fnsrr) + log10(fnsr/fsr), 2)
+		return log10(fsrr/fnsrr) + log10(fnsr/fsr)
+
+	def dir_info(self, S, R, j):
+		ret = self.self_info(S, R[j])
+		for m in range(len(R)):
+			if (m != j):
+				ret += self.self_info(S, R[m-j])
+		return ret
+
+	def pair_info(self, S, R, j):
+		ret = self.self_info(S, R[j])
+		for m in range(len(R)):
+			if (m != j):
+				ret += self.local_info(S, R[j], m-j, R[m-j])/abs(m-j)
+		return ret
 
 if __name__ == '__main__':
 	freq = Frequencies()

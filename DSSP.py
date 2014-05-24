@@ -38,7 +38,7 @@ class DSSPData(list):
                     for c in data:
                         data[c].organism = line[line.find(": ")+2:line.find(";")]
             elif(start):
-                chain = line[11:12].upper()
+                chain = line[11:12]
                 aa = line[13:14].upper()
                 if (chain in data and aa not in "BZXJOU"):
                     struct = line[16:17].upper()
@@ -47,10 +47,13 @@ class DSSPData(list):
                         data[chain].structure += "H"
                     elif (struct in "CSB "):
                         data[chain].structure += "C"
-                    else:
-                        data[chain].structure += struct
+                    elif (struct in "E"):
+                        data[chain].structure += "E"
+                    elif (struct in "T"):
+                        data[chain].structure += "T"
         for c in data:
             data[c].id = filename+c
+            assert (len(data[c].sequence) == len(data[c].structure))
             self.append(data[c])
         file.close()
 
