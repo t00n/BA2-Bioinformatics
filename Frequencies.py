@@ -69,7 +69,7 @@ class Frequencies:
 		fns = sum(sum(x) for x in self.FSR) - fs # number of any structure minus number of structure j
 		return round(log10(fsr/fnsr) + log10(fns/fs), 2)
 
-	def distance_info(self, S, Rj, m, Rjm):
+	def local_info(self, S, Rj, m, Rjm):
 		aa = self.acides.index(Rj)
 		s = self.structures.index(S)
 		bb = self.acides.index(Rjm)
