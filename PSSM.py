@@ -1,12 +1,12 @@
 from Sequence import *
 from Score import *
 from Cluster import *
-from math import log, log10, sqrt, exp
+from math import log10, sqrt, exp
 import json
 import argparse
 
 class PSSM:
-	def __init__(self, sequences, scoring_matrix, alpha = None, beta = None):
+	def __init__(self, sequences, scoring_matrix, a, b):
 		cluster = Cluster(sequences)
 		score = Score.load(scoring_matrix)
 		acides = score.indexes[:-4]
@@ -15,8 +15,8 @@ class PSSM:
 		p = {'T': 5.34, 'C': 1.37, 'H': 2.27, 'I': 5.95, 'K': 5.83, 'W': 1.09, 'E': 6.74, 'F': 3.86, 'P': 4.71, 'S': 6.57, 'V': 6.87, 'L': 9.66, 'R': 5.53, 'N': 4.05, 'Q': 3.93, 'G': 7.08, 'M': 2.41, 'D': 5.46, 'A': 8.26, 'Y': 2.92}
 		self.pssm = [x[:] for x in [[0]*len(acides)]*Lseq]
 
-		alpha = Nseq
-		beta = sqrt(Nseq)
+		alpha = a or Nseq-1
+		beta = b or sqrt(Nseq)
 		for column in range(0, Lseq):
 			for acide in acides:
 				pa = p[acide]/100
@@ -27,7 +27,7 @@ class PSSM:
 				gua = gua * pa
 				fua = cluster.getFrequencyInColumn(column, acide)
 				q = (alpha*fua+beta*gua)/(alpha+beta)
-				self.pssm[column][acides.index(acide)] = round(log10(q/pa), 3)
+				self.pssm[column][acides.index(acide)] = round(log10(q/pa), 2)
 
 
 if __name__ == '__main__':
