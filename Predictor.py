@@ -112,6 +112,18 @@ class Predictor:
 					maX = tmp
 		return "".join(prediction)
 
+def convertDSSP(f, d, cache, overwrite = False):
+	if (not os.path.exists(cache) or overwrite):
+		print("Parsing sequences from " + f + " and " + d, end="... ")
+		sys.stdout.flush()
+		dssp = DSSPData()
+		dssp.loadMany(f, d)
+		print("Done")
+		print("Saving sequences to cache...", end=" ")
+		dssp.saveResult(cache)
+		print("Done")
+
+
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument("info_test", help="File listing the sequences to predict")
@@ -127,27 +139,18 @@ if __name__ == '__main__':
 	FILE_INFO_TEST = args.info_test
 	DIR_DSSP_TEST = args.directory_test
 	CACHE_DIR = ".predictor/"
-	FILE_CACHE = CACHE_DIR + os.path.basename(FILE_INFO)
-	FILE_CACHE_TEST = CACHE_DIR + os.path.basename(FILE_INFO_TEST)
+	CACHE_SEQ = CACHE_DIR + os.path.basename(FILE_INFO)
+	CACHE_SEQ_TEST = CACHE_DIR + os.path.basename(FILE_INFO_TEST)
 
 	if (args.compute or not os.path.exists(CACHE_DIR)):
 		if (not os.path.exists(CACHE_DIR)):
 			print("Creating cache dir...", end=" ")
 			os.mkdir(CACHE_DIR)
 			print("Done")
-		for (f, d, cache) in [(FILE_INFO, DIR_DSSP, FILE_CACHE), 
-								(FILE_INFO_TEST, DIR_DSSP_TEST, FILE_CACHE_TEST)]:
-			print("Parsing sequences from " + f + " and " + d, end="... ")
-			sys.stdout.flush()
-			dssp = DSSPData()
-			dssp.loadMany(f, d)
-			print("Done")
-			print("Saving sequences to cache...", end=" ")
-			dssp.saveResult(cache)
-			print("Done")
+		convertDSSP(FILE_INFO, DIR_DSSP, CACHE_SEQ, True)
 		print("Computing frequencies...", end=" ")
 		sys.stdout.flush()
-		predictor.computeFromFile(FILE_CACHE)
+		predictor.computeFromFile(CACHE_SEQ)
 		print("Done")
 		print("Saving frequencies to cache...", end=" ")
 		sys.stdout.flush()
@@ -158,8 +161,12 @@ if __name__ == '__main__':
 		sys.stdout.flush()
 		predictor.loadFromCache(CACHE_DIR)
 		print("Done")
+
+	convertDSSP(FILE_INFO_TEST, DIR_DSSP_TEST, CACHE_SEQ_TEST)
 	
-	f = open(FILE_CACHE_TEST)
+	print("Predicting future...", end=" ")
+
+	f = open(CACHE_SEQ_TEST)
 	identity, total = 0, 0
 	H, E, T, C = 0, 0, 0, 0
 	TP, TN, FP, FN = 0, 0, 0, 0
@@ -190,6 +197,7 @@ if __name__ == '__main__':
 			# print(predicted)
 			# print(struct)
 	f.close()
+	print("Done")
 	
 	Q3 = identity*100/total
 	print(Q3)
