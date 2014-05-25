@@ -1,5 +1,5 @@
 class Score:
-	INDEXES = [ "A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M", "F", "P", "S", "T", "W", "Y", "V", "B", "Z", "X", "*" ]
+	INDEXES = "ARNDCQEGHILKMFPSTWYV"
 	def __init__(self, matrix = [[]], indexes = INDEXES):
 		self.matrix = matrix
 		self.indexes = indexes

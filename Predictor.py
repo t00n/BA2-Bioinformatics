@@ -2,6 +2,7 @@ from math import log10, sqrt
 import json
 import argparse
 import os
+import sys
 from Score import Score
 from DSSP import DSSPData
 
@@ -10,7 +11,7 @@ class Predictor:
 	CACHE_PFREQ = "pfreq"
 	def __init__(self):
 		score = Score()
-		self.acides = score.indexes[:-4]
+		self.acides = score.indexes
 		self.structures = "HETC"
 
 	def computeFromFile(self, filename):
@@ -131,16 +132,32 @@ if __name__ == '__main__':
 
 	if (args.compute or not os.path.exists(CACHE_DIR)):
 		if (not os.path.exists(CACHE_DIR)):
+			print("Creating cache dir...", end=" ")
 			os.mkdir(CACHE_DIR)
+			print("Done")
 		for (f, d, cache) in [(FILE_INFO, DIR_DSSP, FILE_CACHE), 
 								(FILE_INFO_TEST, DIR_DSSP_TEST, FILE_CACHE_TEST)]:
+			print("Parsing sequences from " + f + " and " + d, end="... ")
+			sys.stdout.flush()
 			dssp = DSSPData()
 			dssp.loadMany(f, d)
+			print("Done")
+			print("Saving sequences to cache...", end=" ")
 			dssp.saveResult(cache)
+			print("Done")
+		print("Computing frequencies...", end=" ")
+		sys.stdout.flush()
 		predictor.computeFromFile(FILE_CACHE)
+		print("Done")
+		print("Saving frequencies to cache...", end=" ")
+		sys.stdout.flush()
 		predictor.saveToCache(CACHE_DIR)
+		print("Done")
 	else:
+		print("Loading frequencies from cache...", end=" ")
+		sys.stdout.flush()
 		predictor.loadFromCache(CACHE_DIR)
+		print("Done")
 	
 	f = open(FILE_CACHE_TEST)
 	identity, total = 0, 0
