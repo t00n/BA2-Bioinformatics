@@ -127,8 +127,8 @@ if __name__ == '__main__':
 	FILE_INFO_TEST = args.info_test
 	DIR_DSSP_TEST = args.directory_test
 	CACHE_DIR = ".predictor/"
-	FILE_CACHE = CACHE_DIR + "sequences"
-	FILE_CACHE_TEST = CACHE_DIR + "predict"
+	FILE_CACHE = CACHE_DIR + os.path.basename(FILE_INFO)
+	FILE_CACHE_TEST = CACHE_DIR + os.path.basename(FILE_INFO_TEST)
 
 	if (args.compute or not os.path.exists(CACHE_DIR)):
 		if (not os.path.exists(CACHE_DIR)):
