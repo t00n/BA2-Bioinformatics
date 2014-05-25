@@ -1,8 +1,4 @@
 import os
-import Score
-
-ROOT_DIR = "dataset/"
-DSSP_DIR = ROOT_DIR + "dssp/"
 
 class DSSPChain:
     def __init__(self):
@@ -20,11 +16,22 @@ class DSSPChain:
         return ret
 
 class DSSPData(list):
-    def __init__(self, *args):
-        list.__init__(self, *args)
+    def loadMany(self, filename, dssp_dir):
+        info = open(filename)
+        files = dict()
+        for line in info:
+            filename = line[:4]
+            seqnum = line[4:5]
+            if (filename not in files):
+                files[filename] = ""
+            if (seqnum not in files[filename]):
+                files[filename] += seqnum
+        info.close()
+        for filename in files:
+            self.loadFromFile(dssp_dir + filename + ".dssp", files[filename])
 
     def loadFromFile(self, filename, chains):
-        file = open(DSSP_DIR + filename + ".dssp", 'r')
+        file = open(filename, 'r')
         start=False
         data = dict.fromkeys(chains, DSSPChain())
         for line in file:
@@ -51,33 +58,20 @@ class DSSPData(list):
                         data[chain].structure += "E"
                     elif (struct in "T"):
                         data[chain].structure += "T"
+                    else:
+                        print("Structure Not Found : ", filename, line[0:5].strip())
         for c in data:
-            data[c].id = filename+c
-            assert (len(data[c].sequence) == len(data[c].structure))
+            data[c].id = os.path.basename(filename).split(".")[0]+c
             self.append(data[c])
         file.close()
 
-class InfoData:
-    def load(self, filename):
-        CATH_info = open(filename)
-        files = dict()
-        for line in CATH_info:
-            filename = line[:4]
-            seqnum = line[4:5]
-            if (filename not in files):
-                files[filename] = ""
-            if (seqnum not in files[filename]):
-                files[filename] += seqnum
-        CATH_info.close()
-        return files
+    def saveResult(self, cache):
+        with open(cache, "w") as output:
+            for line in self:
+                print(line, file=output)
+            output.close()
 
 if __name__ == '__main__':
-    info = InfoData()
-    files = info.load(ROOT_DIR + "CATH_info.txt")
     dssp = DSSPData()
-    for filename in sorted(files.keys()):
-        dssp.loadFromFile(filename, files[filename])
-    output = open(ROOT_DIR + "summary.txt", "w")
-    for line in dssp:
-        print(line, file=output)
-    output.close()
+    dssp.loadMany("dataset/CATH_info.txt", "dataset/dssp/")
+    dssp.saveResult("dataset/summary.txt")
