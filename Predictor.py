@@ -163,6 +163,7 @@ if __name__ == '__main__':
 	convertDSSP(FILE_INFO_TEST, DIR_DSSP_TEST, CACHE_SEQ_TEST)
 	
 	print("Predicting structure...", end=" ")
+	sys.stdout.flush()
 
 	f = open(CACHE_SEQ_TEST)
 	structures = "HETC"
@@ -199,7 +200,7 @@ if __name__ == '__main__':
 			print(a, end="  ")
 			t = sum(res[a][b] for b in structures)
 			for b in structures:
-				q = round(res[a][b]*100/t, 2)
+				q = round(res[a][b]*100/(t if t != 0 else 1), 2)
 				print("{:04}".format(q), "%", end="  ")
 			print()
 		print("Q3 :", round(Q3, 2), "%")

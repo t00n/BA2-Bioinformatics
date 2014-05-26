@@ -47,5 +47,7 @@ if __name__ == '__main__':
 		json.dump(clustal.pssm, f)
 		f.close()
 	else:
+		i = 0
 		for line in clustal.pssm:
-			print(line)
+			print(i, line)
+			i+=1
