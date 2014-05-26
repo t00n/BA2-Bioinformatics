@@ -43,7 +43,6 @@ class Predictor:
 					for m in range(-8, 9):
 						bb = aa+m
 						if (bb >= 0 and bb < len(seq) and m != 0):
-							# print(seq[aa], struct[aa], m, seq[bb])
 							self.pfreq[self.acides.index(seq[aa])] \
 									 [self.structures.index(struct[aa])] \
 									 [m] \
@@ -94,7 +93,7 @@ class Predictor:
 		for m in range(-8, 9):
 			aa = j+m
 			if (aa >= 0 and aa < len(R) and m != 0):
-				ret += self.local_info(S, R[j], m, R[aa])/abs(m)
+				ret += self.local_info(S, R[j], m, R[aa])
 		return ret
 
 	def predict(self, sequence):
@@ -106,7 +105,6 @@ class Predictor:
 			for S in "HETC":
 				tmp = self.pair_info(S, sequence[beg:end], aa-beg) \
 					+ self.dir_info(S, sequence[beg:end], aa-beg )
-					# + self.self_info(S, sequence[aa]) \
 				if (tmp > maX):
 					prediction[aa] = S
 					maX = tmp
@@ -164,12 +162,11 @@ if __name__ == '__main__':
 
 	convertDSSP(FILE_INFO_TEST, DIR_DSSP_TEST, CACHE_SEQ_TEST)
 	
-	print("Predicting future...", end=" ")
+	print("Predicting structure...", end=" ")
 
 	f = open(CACHE_SEQ_TEST)
-	identity, total = 0, 0
-	H, E, T, C = 0, 0, 0, 0
-	TP, TN, FP, FN = 0, 0, 0, 0
+	structures = "HETC"
+	results = []
 	for line in f:
 		if (line[0] == ">"):
 			seq = ""
@@ -179,30 +176,31 @@ if __name__ == '__main__':
 		elif (not struct):
 			struct = line[:-1]
 			predicted = predictor.predict(seq)
-			local = 0
+			Q = dict.fromkeys(structures)
+			for i in Q:
+				Q[i] = dict.fromkeys(structures, 0)
 			for i in range(len(predicted)):
-				if (predicted[i] == struct[i]):
-					identity += 1
-					local += 1
-					if (predicted[i] == "H"):
-						H += 1
-					if (predicted[i] == "E"):
-						E += 1
-					if (predicted[i] == "T"):
-						T += 1
-					if (predicted[i] == "C"):
-						C += 1
-				total += 1
-			print(local*100/len(predicted))
-			# print(predicted)
-			# print(struct)
+				Q[predicted[i]][struct[i]] += 1
+			results.append(Q)
 	f.close()
 	print("Done")
 	
-	Q3 = identity*100/total
-	print(Q3)
-	# print(H*100/total)
-	# print(E*100/total)
-	# print(T*100/total)
-	# print(C*100/total)
-	# print((TP*TN-FP*FN)/(sqrt((TP+FP)*(TP+FN)*(TN+FP)*(TN+FN))))
+	average = 0
+	for res in results:
+		identity = sum(res[a][a] for a in structures)
+		total = sum(res[a][b] for a in structures for b in structures)
+		Q3 = identity*100/total
+		average += Q3
+		print("Predicted/Observed residues : ")
+		print("   ", end="")
+		[print(a, end="        ") for a in structures]
+		print()
+		for a in structures:
+			print(a, end="  ")
+			t = sum(res[a][b] for b in structures)
+			for b in structures:
+				q = round(res[a][b]*100/t, 2)
+				print("{:04}".format(q), "%", end="  ")
+			print()
+		print("Q3 :", round(Q3, 2), "%")
+	print("Q3 avg : ", average/len(results))
